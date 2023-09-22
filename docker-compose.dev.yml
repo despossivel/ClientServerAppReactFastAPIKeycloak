@@ -1,0 +1,46 @@
+version: "3"
+services:
+  webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DEBUG=false
+      - PORT=8000 
+      - SECRET_KEY=3327345934877hgdifujbfjkgndfjghir7348753487
+    ports:
+      - "8000:8000" 
+    networks:
+      - auth
+  client:
+    container_name: client
+    build:
+      context: ./client/
+      dockerfile: Dockerfile
+    environment:
+      - HOST=http://192.168.0.108
+    ports:
+      - "83:80"
+    networks:
+      - auth
+  keycloak:
+      image: quay.io/keycloak/keycloak:20.0.1
+      container_name: keycloak
+      environment:
+        - KEYCLOAK_ADMIN=admin
+        - KEYCLOAK_ADMIN_PASSWORD=admin
+        - KC_DB=postgres
+        - KC_DB_URL=jdbc:postgresql://192.168.0.108:5432/demo
+        - KC_DB_USERNAME=root
+        - KC_DB_PASSWORD=root
+        - KC_HOSTNAME=192.168.0.108
+        - KC_HOSTNAME_STRICT_HTTPS=false
+        - JAVA_OPTS=-Dkeycloak.profile=preview
+      command: start-dev --import-realm
+      ports:
+        - 8080:8080
+      networks:
+      - auth
+networks:
+  auth:
+    driver: bridge

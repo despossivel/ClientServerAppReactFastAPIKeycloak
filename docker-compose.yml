@@ -1,0 +1,17 @@
+version: "3"
+services:
+  webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DEBUG=false
+      - PORT=8000 
+      - SECRET_KEY=3327345934877hgdifujbfjkgndfjghir7348753487
+    ports:
+      - "8000:8000" 
+    networks:
+      - auth
+networks:
+  auth:
+    driver: bridge
